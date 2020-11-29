@@ -29,8 +29,20 @@ class SimplebusTransmitter{
   public:
     SimplebusTransmitter(int pin){
       this->bus_pin = pin;
+      if(DEBUG){
+        Serial.println("Setting transmitter pin.");
+        Serial.flush();
+      }
       digitalWrite(this->bus_pin, SB_HIGH);
+      if(DEBUG){
+        Serial.println("Setting transmitter pin.");
+        Serial.flush();
+      }
       pinMode(this->bus_pin, OUTPUT);
+      if(DEBUG){
+        Serial.println("Transmitter pin set.");
+        Serial.flush();
+      }
     }
     void putMessage(SimplebusMessage message){
       this->transmitStart();

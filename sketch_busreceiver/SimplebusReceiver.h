@@ -21,6 +21,10 @@ class SimplebusReceiver{
     }
 
     void busCallback(){
+      if(DEBUG){
+        Serial.println("Here!");
+        Serial.flush();
+      }
       long long now = millis();
       int duration = now - last_bit_time;
       if( duration>=START_PULSE_DURATION_MIN_MS && duration<=START_PULSE_DURATION_MAX_MS){
@@ -73,7 +77,18 @@ class SimplebusReceiver{
       this->is_message_pending = false;
       this->message_time = -1;
       SimplebusReceiver::instance = this;
+      if(DEBUG){
+        Serial.println("Setting receiver pin.");
+        Serial.flush();
+      }
       pinMode(pin, INPUT);
+      if(DEBUG){
+        Serial.println("Receiver pin set.");
+        Serial.print("Receiver pin state ");
+        Serial.print(digitalRead(pin));
+        Serial.println(".");
+        Serial.flush();
+      }
       this->enableReceiver();
     }  
     SimplebusMessage getMessage(){
@@ -102,9 +117,17 @@ class SimplebusReceiver{
       while( isReceivingMessage() )
         delay(5);
       detachInterrupt(digitalPinToInterrupt(this->bus_pin));
+      if(DEBUG){
+        Serial.println("Receiver disabled.");
+        Serial.flush();
+      }
     }
     void enableReceiver(){
       attachInterrupt(digitalPinToInterrupt(this->bus_pin), SimplebusReceiver::busCallbackAdapter, FALLING);
+      if(DEBUG){
+        Serial.println("Receiver enabled.");
+        Serial.flush();
+      }
     }
     bool isReceivingMessage(){
         if(millis()-last_bit_time > MAX_MESSAGE_IDLE_MS){
