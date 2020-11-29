@@ -5,12 +5,27 @@ If you live in an older building with an audio-only door phone based on the Simp
 - If you are interested in the project, please get in touch! Your expertise is appreciated.
 ```
 
-## Contents of this repository
+<img src="breadboard.jpg" style="
+    width:50%; float:right; margin-left:15px;
+" />
 
-| Content | Description |
-| ---- | ---- |
-| sketch_busreceiver | Arduino sketch that implements a BusReceiver class that receives commands from the bus. Tested on Arduino Nano. |
+## State of the project
+The SimpleBus class allows to receive and send commands on the bus.
 
+A test sketch is included.
+
+Tested on Arduino Nano.
+
+TODO list:
+- [ ] ~~Getting power from the bus~~ (it appears that there is not enough power)
+- [x] Receiving messages from the bus
+- [x] Sending messages on the bus
+- [x] Listening to analog audio on the bus
+- [ ] Transmitting analog audio on the bus
+- [ ] Porting on Wemos D1, adding wifi communication
+- [ ] Recording audio through the microcontroller ADC
+- [ ] Transmitting audio through a DAC
+- [ ] Web/cloud interface
 
 
 ## Acknowledgements
