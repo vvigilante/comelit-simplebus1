@@ -6,13 +6,14 @@ If you live in an older building with an audio-only door phone based on the Simp
 ```
 
 ## Contents of this repository
-| Content | Description
-|----
-| sketch_busreceiver | Arduino sketch that implements a BusReceiver class that receives commands from the bus. Tested on Arduino Nano.
+
+| Content | Description |
+| ---- | ---- |
+| sketch_busreceiver | Arduino sketch that implements a BusReceiver class that receives commands from the bus. Tested on Arduino Nano. |
 
 
 
-## Aknowledgements
+## Acknowledgements
 Thank you to Antonio Avallone for being the mantainer of the electronics side of this project
 
 ## Previous work
