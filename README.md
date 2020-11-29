@@ -20,7 +20,9 @@ TODO list:
 - [x] Sending messages on the bus
 - [x] Listening to analog audio on the bus
 - [ ] Transmitting analog audio on the bus
-- [ ] Porting on Wemos D1, adding wifi communication
+- [x] Porting on Wemos D1
+- [ ] Adding wifi communication
+- [ ] Implementing deep sleep
 - [ ] Recording audio through the microcontroller ADC
 - [ ] Transmitting audio through a DAC
 - [ ] Web/cloud interface
