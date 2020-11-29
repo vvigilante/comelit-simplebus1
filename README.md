@@ -5,9 +5,7 @@ If you live in an older building with an audio-only door phone based on the Simp
 - If you are interested in the project, please get in touch! Your expertise is appreciated.
 ```
 
-<img src="breadboard.jpg" style="
-    width:50%; float:right; margin-left:15px;
-" />
+<img src="breadboard.jpg" align="right" />
 
 ## State of the project
 The SimpleBus class allows to receive and send commands on the bus.
