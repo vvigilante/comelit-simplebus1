@@ -12,7 +12,7 @@ The SimpleBus class allows to receive and send commands on the bus.
 
 A test sketch is included.
 
-Tested on Arduino Nano.
+Tested on Wemos D1 mini.
 
 TODO list:
 - [ ] ~~Getting power from the bus~~ (it appears that there is not enough power)
