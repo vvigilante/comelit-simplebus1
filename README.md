@@ -13,7 +13,7 @@ If you live in an older building with an audio-only door phone based on the Simp
 
 
 
-## Aknowledgements
+## Acknowledgements
 Thank you to Antonio Avallone for being the mantainer of the electronics side of this project
 
 ## Previous work
