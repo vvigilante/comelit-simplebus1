@@ -5,13 +5,40 @@ If you live in an older building with an audio-only door phone based on the Simp
 - If you are interested in the project, please get in touch! Your expertise is appreciated.
 ```
 
-<img src="breadboard.jpg" align="right" />
+## Usage
+
+Wire according to the wiring diagram; **mind the polarity of the bus!**
+
+![](wiring.gif)
+
+The test sketch contains a SimpleBus class, which allows to receive and send commands on the bus.
+The test sketch will print a log on the serial of the messages received on the bus.
+
+Example of a communication
+```
+time: [41.404s] message: [000011 10110000 1010 - CALL 13 chkOK]
+time: [41.457s] ack
+time: [47.914s] message: [100010 10110000 1010 - PUP1 13 chkOK]
+time: [47.961s] ack
+time: [48.128s] message: [100011 10110000 0110 - PUP2 13 chkOK]
+time: [48.172s] ack
+time: [49.524s] message: [000010 10110000 0010 - OPEN 13 chkOK]
+time: [49.571s] ack
+time: [51.316s] message: [000010 10110000 0010 - OPEN 13 chkOK]
+time: [51.362s] ack
+time: [53.545s] message: [000010 10110000 0010 - OPEN 13 chkOK]
+time: [53.592s] ack
+time: [58.221s] message: [010010 10110000 1010 - HUP 13 chkOK]
+time: [58.256s] ack
+time: [68.616s] message: [111111 11111111 0111 - CLEAR 255 chkOK]
+time: [68.952s] message: [111111 11111111 0111 - CLEAR 255 chkOK]
+time: [69.289s] message: [111111 11111111 0111 - CLEAR 255 chkOK]
+time: [69.626s] message: [111111 11111111 0111 - CLEAR 255 chkOK]
+time: [69.963s] message: [111111 11111111 0111 - CLEAR 255 chkOK]
+```
+
 
 ## State of the project
-The SimpleBus class allows to receive and send commands on the bus.
-
-A test sketch is included.
-
 Tested on Wemos D1 mini.
 
 TODO list:
