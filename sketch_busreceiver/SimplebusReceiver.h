@@ -16,7 +16,7 @@ class SimplebusReceiver{
     long long message_time;
 
     static SimplebusReceiver* instance;
-    static void busCallbackAdapter(){ // TODO update with non-static std::function 
+    ICACHE_RAM_ATTR static void busCallbackAdapter(){ // TODO update with non-static std::function 
       instance->busCallback();
     }
 
