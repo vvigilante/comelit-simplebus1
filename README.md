@@ -39,7 +39,7 @@ time: [69.963s] message: [111111 11111111 0111 - CLEAR 255 chkOK]
 
 
 ## State of the project
-Tested on Wemos D1 mini.
+Tested on Wemos D1 mini (esp8266 arduino core 2.4.2).
 
 TODO list:
 - [ ] ~~Getting power from the bus~~ (it appears that there is not enough power)
