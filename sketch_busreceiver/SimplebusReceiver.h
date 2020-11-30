@@ -20,10 +20,11 @@ class SimplebusReceiver{
       instance->busCallback();
     }
 
+  public:
+  
     void busCallback(){
       if(DEBUG){
-        Serial.println("Here!");
-        Serial.flush();
+        Serial.print("DEBUG: ");
       }
       long long now = millis();
       int duration = now - last_bit_time;
@@ -31,6 +32,10 @@ class SimplebusReceiver{
         this->message=0;
         this->num_received_bits=0;
         this->is_receiving_message=true;
+        this->num_ack_pulses=0;
+        if(DEBUG){
+          Serial.print("START ");
+        }
       }
       if( duration>=SHORT_PULSE_DURATION_MIN_MS && duration<=SHORT_PULSE_DURATION_MAX_MS){
         if(this->isReceivingMessage()){
@@ -42,12 +47,19 @@ class SimplebusReceiver{
             this->ack_received = true;
           }
         }
+        if(DEBUG){
+          Serial.print("SHORT ");
+        }
       }
       if( duration>=LONG_PULSE_DURATION_MIN_MS && duration<=LONG_PULSE_DURATION_MAX_MS){
         if(this->isReceivingMessage()){
           this->message <<= 1;
           this->message |= 1;
           this->num_received_bits++;
+        }
+        this->num_ack_pulses=0;
+        if(DEBUG){
+          Serial.print("LONG ");
         }
       }
       if(this->num_received_bits == MESSAGE_LEN){ // Message received?
@@ -57,15 +69,19 @@ class SimplebusReceiver{
         this->message_time = now;
       }
       if(DEBUG){
-        Serial.print("DEBUG: last:[");
+        Serial.print(" duration:[");
+        Serial.print((int)duration);
+        Serial.print("] last:[");
         Serial.print((int)this->last_bit_time);
         Serial.print("] now:[");
         Serial.print((int)now);
+        Serial.print("] message_len:[");
+        Serial.print((int)this->num_received_bits);
         Serial.println("]");
       }
       this->last_bit_time = now;
     }
-  public:
+    
     SimplebusReceiver(int pin){
       this->bus_pin = pin;
       this->last_bit_time = -1;
@@ -123,6 +139,7 @@ class SimplebusReceiver{
       }
     }
     void enableReceiver(){
+      pinMode(this->bus_pin, INPUT);
       attachInterrupt(digitalPinToInterrupt(this->bus_pin), SimplebusReceiver::busCallbackAdapter, FALLING);
       if(DEBUG){
         Serial.println("Receiver enabled.");
