@@ -1,6 +1,9 @@
 #include "SimplebusReceiver.h"
 #include "SimplebusTransmitter.h"
 
+#ifndef SIMPLEBUS_H_
+#define SIMPLEBUS_H_
+
 class Simplebus : public SimplebusReceiver, SimplebusTransmitter{
     public:
         Simplebus(int receiver_pin, int transmitter_pin):
@@ -23,22 +26,7 @@ class Simplebus : public SimplebusReceiver, SimplebusTransmitter{
             SimplebusTransmitter::putAck();
             this->enableReceiver();
         }
-        SimplebusMessage getMessageAndAck(){
-            long long msg_time; 
-            SimplebusMessage msg = this->getMessage(&msg_time);
-            if(!msg.valid)
-                return msg;
-            else{
-                if(msg.isChecksumValid()){
-                    while( millis() - msg_time < MIN_TIME_BEFORE_ACK_MS )
-                        delay(2);
-                    this->putAck();
-                    return msg;
-                }else{
-                    msg.valid = false;
-                    return msg;
-                }
-            }
-        }
 
 };
+
+#endif /* SIMPLEBUS_H_ */

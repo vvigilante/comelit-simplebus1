@@ -6,14 +6,14 @@
 class SimplebusReceiver{
   private: 
     int bus_pin;
-    long long last_bit_time;
+    long unsigned last_bit_time;
     int num_received_bits;
     uint32_t message;
     bool is_receiving_message;
     int num_ack_pulses;
     bool ack_received;
     bool is_message_pending;
-    long long message_time;
+    long unsigned message_time;
 
     static SimplebusReceiver* instance;
     ICACHE_RAM_ATTR static void busCallbackAdapter(){ // TODO update with non-static std::function 
@@ -26,7 +26,7 @@ class SimplebusReceiver{
       if(DEBUG){
         Serial.print("DEBUG: ");
       }
-      long long now = millis();
+      long unsigned now = millis();
       int duration = now - last_bit_time;
       if( duration>=START_PULSE_DURATION_MIN_MS && duration<=START_PULSE_DURATION_MAX_MS){
         this->message=0;
@@ -110,7 +110,7 @@ class SimplebusReceiver{
     SimplebusMessage getMessage(){
       return this->getMessage(NULL);
     }
-    SimplebusMessage getMessage(long long* time){
+    SimplebusMessage getMessage(long unsigned* time){
       if(this->is_message_pending){
         if(time)
           *time = this->message_time;
