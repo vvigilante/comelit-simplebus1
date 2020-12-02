@@ -48,8 +48,9 @@ TODO list:
 - [x] Listening to analog audio on the bus
 - [ ] Transmitting analog audio on the bus
 - [x] Porting on Wemos D1
-- [ ] Adding wifi communication
-- [ ] Implementing deep sleep
+- [x] Adding wifi communication
+- [x] Implementing sleep
+- [ ] Intercom protocol implementation (to be tested)
 - [ ] Recording audio through the microcontroller ADC
 - [ ] Transmitting audio through a DAC
 - [ ] Web/cloud interface
