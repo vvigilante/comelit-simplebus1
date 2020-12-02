@@ -57,7 +57,7 @@ TODO list:
 
 
 ## Acknowledgements
-Thank you to Antonio Avallone for being the mantainer of the electronics side of this project
+Thank you to Antonio Avallone for his help with the electronics of this project
 
 ## Previous work
 * http://stdio.be/blog/2014-08-17-Fixing-the-intercom-with-logic-analyzer/1
