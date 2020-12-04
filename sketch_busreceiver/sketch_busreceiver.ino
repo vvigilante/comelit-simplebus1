@@ -47,8 +47,8 @@ ICACHE_RAM_ATTR void wakeupCallback(){
   wakeup_time=millis();
   time_last_event = millis();
   digitalWrite(LED_BUILTIN, LOW);
-  sb->enableReceiver();
   logger.log("Wake up.");
+  sb->enableReceiver();
 }
 inline void goToSleep(){
   logger.log("Going to sleep.");
@@ -64,6 +64,8 @@ inline void goToSleep(){
 void goToSleep(){
 }
 #endif /* ENABLE_SLEEP */
+
+ADC_MODE(ADC_VCC); 
 
 void setup() {
   ESP.wdtDisable();
@@ -114,8 +116,12 @@ void loop() {
   }
   if(millis()-time_last_event > SLEEP_TIME_MS && !sb->isReceivingMessage()){
     time_last_event = millis();
+    logger.log("Vcc: %.3f", ESP.getVcc()/1024.00f);
     logger.flush(true);
-    goToSleep();
+    if(!sb->isReceivingMessage()){
+      sb->disableReceiver();
+      goToSleep();
+    }
   }
   //if( (millis()/2) % 1000 == 0){    Serial.println("alive");  }
 }
