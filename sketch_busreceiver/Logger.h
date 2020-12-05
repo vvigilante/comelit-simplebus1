@@ -24,14 +24,15 @@ public:
         va_start(argptr, format);
         size_t n;
         unsigned long time = millis();
-        n = snprintf(this->buffer+this->pos, MAX(0, this->buf_size-this->pos-1), "%d.%03d - ", time/1000, time%1000);
+        n = snprintf(this->buffer+this->pos, MAX(0, this->buf_size-this->pos-2), "%d.%03d - ", time/1000, time%1000);
         this->pos += n;
-        n = vsnprintf(this->buffer+this->pos, MAX(0, this->buf_size-this->pos-1), format, argptr);
+        n = vsnprintf(this->buffer+this->pos, MAX(0, this->buf_size-this->pos-2), format, argptr);
         this->pos += n;
-        this->buffer[this->pos++]='\n';
+        if(this->pos<this->buf_size-1)
+            this->buffer[this->pos++]='\n';
         this->buffer[this->pos]='\0';
         va_end(argptr);
-        Serial.print(b);
+        //Serial.print(b);
    }
    virtual void flush(bool force = false) = 0;
 
