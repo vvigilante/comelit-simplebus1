@@ -42,13 +42,9 @@ long unsigned time_last_event = 0;
 
 #define FPM_SLEEP_MAX_TIME  0xFFFFFFF
 unsigned long wakeup_time = 0;
+bool wakeup_now = false;
 ICACHE_RAM_ATTR void wakeupCallback(){
-  sb->busCallback();
-  wakeup_time=millis();
-  time_last_event = millis();
-  digitalWrite(LED_BUILTIN, LOW);
-  logger.log("Wake up.");
-  sb->enableReceiver();
+  wakeup_now = true;
 }
 inline void goToSleep(){
   logger.log("Going to sleep.");
@@ -59,6 +55,7 @@ inline void goToSleep(){
   gpio_pin_wakeup_enable(digitalPinToInterrupt(BUS_RECEIVE_PIN), GPIO_PIN_INTR_LOLEVEL);
   wifi_fpm_set_wakeup_cb(wakeupCallback);
   wifi_fpm_do_sleep(FPM_SLEEP_MAX_TIME);
+  delay(1);
 }
 #else /* ENABLE_SLEEP */
 void goToSleep(){
@@ -84,6 +81,15 @@ bool connected = false;
 
 #define WIFI_ENABLE_AFTER_WAKEUP_TIME_MS 2500
 void loop() {
+  if(wakeup_now){
+    wakeup_now = false;
+    sb->busCallback();
+    wakeup_time=millis();
+    time_last_event = millis();
+    digitalWrite(LED_BUILTIN, LOW);
+    logger.log("Wake up.");
+    sb->enableReceiver();
+  }
   delay(2);
   long unsigned message_time = -1;
   
