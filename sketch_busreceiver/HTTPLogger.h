@@ -5,7 +5,7 @@
 #ifndef HTTPLOGGER_H_ 
 #define HTTPLOGGER_H_ 
 
-#define BUF_SIZE_DEFAULT 2048
+#define BUF_SIZE_DEFAULT 4096
 #define MIN_TIME_BETWEEN_FLUSH_MS_DEFAULT 20000
 #define URL_DEFAULT "http://www.vvigilante.com/log/"
 
