@@ -2,6 +2,6 @@ In this experiment we use a python server to stream audio samples to a web page 
 
 TODO
 - [X] Stream audio in binary, not json
-- [ ] Fix python server crashing when socket is closed by the client
-- [ ] C++ server
+- [X] Fix python server crashing when socket is closed by the client
 - [ ] 2 way audio stream (client to server)
+- [ ] C++ server

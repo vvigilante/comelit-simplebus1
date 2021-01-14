@@ -1,5 +1,7 @@
 from flask import Flask, render_template, send_from_directory
-from flask_sockets import Sockets
+from flask_sockets import Sockets # https://github.com/heroku-python/flask-sockets
+from gevent import monkey
+monkey.patch_all()
 
 import numpy as np
 from base64 import b64encode
@@ -27,20 +29,26 @@ test_data = np.tile(np.array([127, 201, 248, 247, 200, 124,  50,   5,   7,  55, 
 app = Flask(__name__)
 sockets = Sockets(app)
 
+def handlews_receive(ws):
+    print('WS Open')
+    message = ws.receive()
+    print(message)
+
 @sockets.route('/ws')
 def handlews(ws):
+    Thread(target=handlews_receive, daemon=True, args=[ws]).start()
     while not ws.closed:
         sendaudio(ws)
-        sleep(1)
+        
+    print("WS Closed")
 
 def sendaudio(ws):
     RATE = 4000
-    while True:
-        d = test_data
-        SENT = len(d)
-        TIME_SENT = SENT/RATE
-        ws.send( d )
-        sleep(TIME_SENT)
+    d = test_data
+    SENT = len(d)
+    TIME_SENT = SENT/RATE
+    ws.send( d )
+    sleep(TIME_SENT)
 
 
 

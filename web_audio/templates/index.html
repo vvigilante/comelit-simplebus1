@@ -11,7 +11,15 @@
             class MyWorkletNode extends AudioWorkletNode{
                 constructor(){
                     super(audioCtx, 'ws-receiver');
+                    this.socket = null;
+                    
+                    window.addEventListener("unload", function () {
+                            if(this.socket && this.socket.readyState == WebSocket.OPEN)
+                                this.socket.close();
+                        });
                 }
+                
+                    
                 start(){
                     var p = this.port;
                     this.socket = new WebSocket('ws://localhost:5000/ws');
@@ -19,7 +27,6 @@
                         event.data.arrayBuffer().then(function(d){
                             d = new Uint8Array( d );
                             p.postMessage(d);
-                            console.log(d);
                         });
                     };
                     this.socket.onopen = function(event) {
@@ -31,9 +38,11 @@
                     this.socket.onerror = function(event) {
                         $('#log').append('<p>Error: [' + event.message + '].</p>');
                     };
+                    
                 }
                 stop(){
-                    this.socket.close();
+                    console.log('closing');
+                    this.socket.close(1000);
                 }
             }
 
