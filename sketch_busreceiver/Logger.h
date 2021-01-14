@@ -32,7 +32,7 @@ public:
             this->buffer[this->pos++]='\n';
         this->buffer[this->pos]='\0';
         va_end(argptr);
-        //Serial.print(b);
+        this->flush();
    }
    virtual void flush(bool force = false) = 0;
 
@@ -42,15 +42,8 @@ protected:
    size_t buf_size;
 };
 
-const char* ip_to_str(IPAddress ip){
-    static char str_ip[16];
-    char* pstr_ip=str_ip;
-    for(int i=0; i<4; i++){
-        if(i)
-            *(pstr_ip++)='.';
-        pstr_ip+=sprintf(pstr_ip, "%d", ip[i]);
-    }
-    return str_ip;
-}
+Logger* logger = NULL;
+
+#define LOG(...) do{ if(logger) logger->log(__VA_ARGS__); }while(0)
 
 #endif /* LOGGER_H_ */

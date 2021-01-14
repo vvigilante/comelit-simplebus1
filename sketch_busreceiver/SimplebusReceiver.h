@@ -77,6 +77,9 @@ class SimplebusReceiver{
         Serial.print((int)now);
         Serial.print("] message_len:[");
         Serial.print((int)this->num_received_bits);
+        Serial.print("] ack:[");
+        Serial.print((int)this->num_ack_pulses);
+        Serial.print(this->ack_received?'-':'Y');
         Serial.println("]");
       }
       this->last_bit_time = now;
@@ -134,7 +137,8 @@ class SimplebusReceiver{
         delay(5);
       detachInterrupt(digitalPinToInterrupt(this->bus_pin));
       if(DEBUG){
-        Serial.println("Receiver disabled.");
+        Serial.print(millis());
+        Serial.println(" - Receiver disabled.");
         Serial.flush();
       }
     }
@@ -142,7 +146,8 @@ class SimplebusReceiver{
       pinMode(this->bus_pin, INPUT);
       attachInterrupt(digitalPinToInterrupt(this->bus_pin), SimplebusReceiver::busCallbackAdapter, FALLING);
       if(DEBUG){
-        Serial.println("Receiver enabled.");
+        Serial.print(millis());
+        Serial.println(" - Receiver enabled.");
         Serial.flush();
       }
     }

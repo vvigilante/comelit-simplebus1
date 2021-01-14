@@ -45,6 +45,7 @@ class SimplebusTransmitter{
       }
     }
     void putMessage(SimplebusMessage message){
+      LOG("Putting %s", message.toString().c_str());
       this->transmitStart();
       for(int i=CMD_LEN-1; i>=0; i--)
         this->transmitValue((message.command>>i)&1);
@@ -53,16 +54,19 @@ class SimplebusTransmitter{
       for(int i=CHK_LEN-1; i>=0; i--)
         this->transmitValue((message.checksum>>i)&1);
       this->transmitEnd();
+      LOG("done.");
     }
     void putMessage(uint8_t command, uint8_t id){
       SimplebusMessage message(command, id);
       this->putMessage(message);
     }
     void putAck(){
+      LOG("Putting ack.");
       transmitValue(0);
       transmitValue(0);
       transmitValue(0);
       transmitValue(0);
+      LOG("done.");
     }
 };
 

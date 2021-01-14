@@ -22,7 +22,7 @@
 #ifndef SIMPLEBUS_MESSAGE_H_
 #define SIMPLEBUS_MESSAGE_H_
 
-#define DEBUG false /**< Enable for verbose serial print inside the class */
+#define DEBUG true /**< Enable for verbose serial print inside the class */
 
 #define CMD_OPEN     2 // 000010
 #define CMD_CALL     3 // 000011
@@ -43,7 +43,7 @@
 // Reception times
 #define START_PULSE_DURATION_MIN_MS 14
 #define START_PULSE_DURATION_MAX_MS 23
-#define SHORT_PULSE_DURATION_MIN_MS  3
+#define SHORT_PULSE_DURATION_MIN_MS  2
 #define SHORT_PULSE_DURATION_MAX_MS  7
 #define LONG_PULSE_DURATION_MIN_MS   8
 #define LONG_PULSE_DURATION_MAX_MS  10
