@@ -18,11 +18,12 @@ class WSReceiver extends AudioWorkletProcessor {
         if (logsampling == 10) {
             logsampling = 0;
             console.log(this.samples.length);
+            console.log(this.samples.getFront());
         }
         logsampling++;
         var d = event['data'];
         for (var i = 0; i < d.length; i++){
-            var v = d.charCodeAt(i)/127 - 1;
+            var v = d[i]/127 - 1;
             this.samples.enqueue(v);
         }
     }
