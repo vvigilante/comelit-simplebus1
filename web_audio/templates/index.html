@@ -18,7 +18,9 @@
                     super(audioCtx, 'ws-receiver', {'processorOptions':{'wsurl':'wss://localhost:5000/socket.io'}});
                     var p = this.port;
                     socket.on('audio_data', function(msg){
-                        p.postMessage(msg['data']);
+                        var d = msg['data'];
+                        d = atob(d);
+                        p.postMessage(d);
                     });
                 }
             }
