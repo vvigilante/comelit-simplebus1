@@ -31,8 +31,9 @@ sockets = Sockets(app)
 
 def handlews_receive(ws):
     print('WS Open')
-    message = ws.receive()
-    print(message)
+    while not ws.closed:
+        message = ws.receive()
+        print(message)
 
 @sockets.route('/ws')
 def handlews(ws):
