@@ -43,7 +43,6 @@
                     this.port.start();
                 }
                 ondata(event){
-                    //console.log(event);
                     this.socket.send(event['data']);
                 }
             }
