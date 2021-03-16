@@ -1,13 +1,14 @@
 #include "Logger.h"
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+#include <Wifi.h>
+#include <HTTPClient.h>
 
 #ifndef HTTPLOGGER_H_ 
 #define HTTPLOGGER_H_ 
 
 #define BUF_SIZE_DEFAULT 4096
 #define MIN_TIME_BETWEEN_FLUSH_MS_DEFAULT 20000
-#define URL_DEFAULT "http://www.vvigilante.com/log/"
+#define URL_DEFAULT "https://www.vvigilante.com/log/"
+
 
 class HTTPLogger : public Logger{
     private:
@@ -21,18 +22,23 @@ class HTTPLogger : public Logger{
                 this->url = url;
         }
         void flush(bool force = false){
+            if(WiFi.status() != WL_CONNECTED)
+                return;
             if(0==this->pos)
                 return;
             unsigned long time_since_last_flush_ms = millis() - last_flush_ms;
             if(force || time_since_last_flush_ms > min_time_between_flush_ms){
                 HTTPClient http;
-                http.begin(this->url);
+                WiFiClientSecure wificlient;
+                wificlient.setInsecure();
+                http.begin(wificlient, this->url);
                 http.addHeader("Content-Type", "text/plain");
                 http.addHeader("X-Sender", WiFi.macAddress());
-                int httpCode = http.POST((const uint8_t*)this->buffer, this->pos);
+                int httpCode = http.POST((uint8_t*)this->buffer, this->pos);
                 http.end();
                 if(HTTP_CODE_OK == httpCode){
                     this->pos = 0;
+                    this->buffer[0]='\0';
                     last_flush_ms = millis();
                 }
             }

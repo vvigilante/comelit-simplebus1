@@ -1,6 +1,6 @@
 #include "Logger.h"
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
 
 #ifndef SERIALLOGGER_H_ 
 #define SERIALLOGGER_H_ 
@@ -17,6 +17,7 @@ class SerialLogger : public Logger{
         void flush(bool force = false){
             Serial.print(this->buffer);
             this->pos=0;
+            this->buffer[0]='\0';
             if(force)
                 Serial.flush();
         }

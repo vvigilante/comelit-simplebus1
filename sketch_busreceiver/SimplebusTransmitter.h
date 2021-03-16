@@ -1,3 +1,4 @@
+#include "Logger.h"
 #include "SimplebusMessage.h"
 
 #ifndef SIMPLEBUS_TRANSMITTER_H_

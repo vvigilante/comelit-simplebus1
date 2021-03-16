@@ -16,7 +16,7 @@ public:
         this->buf_size = buf_size;
     }
 
-   void log(const char* format, ...)
+   void log(bool wnewline, const char* format, ...)
    {
         // use x, y and b
         const char* b = this->buffer+this->pos;
@@ -28,7 +28,7 @@ public:
         this->pos += n;
         n = vsnprintf(this->buffer+this->pos, MAX(0, this->buf_size-this->pos-2), format, argptr);
         this->pos += n;
-        if(this->pos<this->buf_size-1)
+        if(wnewline && this->pos<this->buf_size-1)
             this->buffer[this->pos++]='\n';
         this->buffer[this->pos]='\0';
         va_end(argptr);
@@ -42,8 +42,8 @@ protected:
    size_t buf_size;
 };
 
-Logger* logger = NULL;
+extern Logger* logger;
 
-#define LOG(...) do{ if(logger) logger->log(__VA_ARGS__); }while(0)
+#define LOG(...) do{ if(logger) logger->log(true, __VA_ARGS__); }while(0)
 
 #endif /* LOGGER_H_ */
