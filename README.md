@@ -9,6 +9,8 @@ If you live in an older building with an audio-only door phone based on the Simp
 
 Wire according to the wiring diagram; **mind the polarity of the bus!**
 
+Note: the image is old, we are now using a different microcontroller (different pins). Check the sketch.
+
 ![](wiring.gif)
 
 The test sketch contains a SimpleBus class, which allows to receive and send commands on the bus.
@@ -39,14 +41,14 @@ time: [69.963s] message: [111111 11111111 0111 - CLEAR 255 chkOK]
 
 
 ## State of the project
-Tested on Wemos D1 mini (esp8266 arduino core 2.4.2).
+Tested on Wemos D1 mini32 (esp32 arduino core 1.0.5).
 
 TODO list:
 - [ ] ~~Getting power from the bus~~ (it appears that there is not enough power)
 - [x] Receiving messages from the bus
 - [x] Sending messages on the bus
 - [x] Listening to analog audio on the bus
-- [ ] Transmitting analog audio on the bus
+- [X] Transmitting analog audio on the bus
 - [x] Porting on Wemos D1
 - [x] Adding wifi communication
 - [x] Implementing sleep
