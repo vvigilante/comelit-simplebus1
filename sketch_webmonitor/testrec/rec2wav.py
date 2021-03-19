@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-with open('rec.json') as f:
+with open(sys.argv[1]) as f:
     d = json.load(f)
 audio = [i['y'] for i in d]
 audio = np.array(audio, dtype=np.int16)
@@ -22,7 +22,7 @@ plt.grid(True)
 plt.show()
 #sys.exit(0)
 
-wav_file=wave.open("rec.wav","w")
+wav_file=wave.open(os.path.splitext(sys.argv[1])[0]+'.wav',"w")
 nchannels = 1
 sampwidth = 2
 sample_rate = 8000
