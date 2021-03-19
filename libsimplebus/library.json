@@ -1,0 +1,12 @@
+{
+  "name": "libsimplebus",
+  "keywords": "intercom,comelit,simplebus",
+  "description": "[EXPERIMENTAL] Interact with Comelit Simplebus 1 Audio intercom protocol.",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/vvigilante/comelit-simplebus1.git"
+  },
+  "frameworks": "arduino",
+  "platforms": "esp32"
+}
