@@ -12,7 +12,7 @@ class SimplebusReceiver{
     uint32_t message;
     bool is_receiving_message;
     int num_ack_pulses;
-    bool ack_received;
+    long unsigned ack_received;
     bool is_message_pending;
     long unsigned message_time;
     
@@ -23,7 +23,7 @@ class SimplebusReceiver{
     SimplebusReceiver(int pin);
     SimplebusMessage getMessage();
     SimplebusMessage getMessage(long unsigned* time);
-    bool getAck();
+    long unsigned getAck();
     void disableReceiver();
     void enableReceiver();
     bool isReceivingMessage();

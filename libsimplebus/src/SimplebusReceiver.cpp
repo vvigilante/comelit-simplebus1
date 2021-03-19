@@ -28,7 +28,8 @@ void SimplebusReceiver::busCallback(){
     }else{
       this->num_ack_pulses++;
       if(this->num_ack_pulses==NUM_ACK_PULSES){ // Ack received?
-        this->ack_received = true;
+        this->ack_received = now;
+        this->num_ack_pulses = 0;
       }
     }
     if(DEBUG){
@@ -67,7 +68,7 @@ SimplebusReceiver::SimplebusReceiver(int pin){
   this->message = 0;
   this->is_receiving_message = false;
   this->num_ack_pulses = 0;
-  this->ack_received = false;
+  this->ack_received = 0;
   this->is_message_pending = false;
   this->message_time = -1;
   SimplebusReceiver::instance = this;
@@ -97,10 +98,10 @@ SimplebusMessage SimplebusReceiver::getMessage(long unsigned* time){
     *time = -1;
   return SimplebusMessage();
 }
-bool SimplebusReceiver::getAck(){
-  bool result = this->ack_received;
+unsigned long SimplebusReceiver::getAck(){
+  unsigned long result = this->ack_received;
   if(result){
-    this->ack_received = false;
+    this->ack_received = 0;
     this->num_ack_pulses = 0;
   }
   return result;

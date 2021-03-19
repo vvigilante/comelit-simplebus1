@@ -23,9 +23,11 @@ public:
         va_list argptr;
         va_start(argptr, format);
         size_t n;
-        unsigned long time = millis();
-        n = snprintf(this->buffer+this->pos, MAX(0, this->buf_size-this->pos-2), "%d.%03d - ", time/1000, time%1000);
-        this->pos += n;
+        if(wnewline){
+            unsigned long time = millis();
+            n = snprintf(this->buffer+this->pos, MAX(0, this->buf_size-this->pos-2), "%d.%03d - ", time/1000, time%1000);
+            this->pos += n;
+        }
         n = vsnprintf(this->buffer+this->pos, MAX(0, this->buf_size-this->pos-2), format, argptr);
         this->pos += n;
         if(wnewline && this->pos<this->buf_size-1)

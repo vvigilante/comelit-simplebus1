@@ -10,10 +10,6 @@
 #define MY_ID UINT8_MAX
 
 
-typedef enum{
-    SB_STATE_HUP = 0,
-    SB_STATE_CALL = 1
-} SimplebusIntercomState;
 
 class SimplebusIntercom{
     private:

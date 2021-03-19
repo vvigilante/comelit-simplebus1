@@ -31,15 +31,19 @@ class CircularQueue{
 
 		CircularQueue(const CircularQueue<TInfo>& other){ // copy constructor
 			std::copy(std::begin(this->array), std::end(this->array), std::begin(other.array));
-			this->array_limit = other->array_limit;
-			this->front = other->front;
-			this->back = other->back;
+			this->array_limit = other.array_limit;
+			this->front = other.front;
+			this->back = other.back;
 		}
 		CircularQueue(const CircularQueue<TInfo>&& other){ // move constructor
 			this->array = other.array;
-			this->array_limit = other->array_limit;
-			this->front = other->front;
-			this->back = other->back;
+			this->array_limit = other.array_limit;
+			this->front = other.front;
+			this->back = other.back;
+			other.array = nullptr;
+			other.array_limit = nullptr;
+			other.front = nullptr;
+			other.back = nullptr;
 		}
 	    CircularQueue& operator=(const CircularQueue& other){ // copy assignment
 			std::copy(std::begin(this->array), std::end(this->array), std::begin(other.array));
@@ -52,6 +56,10 @@ class CircularQueue{
 			other.array_limit = other.array_limit;
 			other.front = other.front;
 			other.back = other.back;
+			other.array = nullptr;
+			other.array_limit = nullptr;
+			other.front = nullptr;
+			other.back = nullptr;
 		}
 
 		/**
@@ -59,19 +67,19 @@ class CircularQueue{
 		 * @return 	true	if the queue is full
 		 * @return 	false	otherwise
 		 */
-		bool isFull();
+		bool isFull() const;
 		/**
 		 * @brief 	Check if the queue is empty
 		 * @return 	true	if the queue is empty
 		 * @return 	false	otherwise
 		 */
-		bool isEmpty();
+		bool isEmpty() const;
 		/**
 		 * @brief 	Returns the length of the queue
 		 * @param	[in] q		The queue
 		 * @return 	int	The length
 		 */
-		int getLength();
+		int getLength() const;
 		/**
 		 * @brief 	Add an element to the queue
 		 * @return	TInfo*		If the queue is full the element that was removed
@@ -157,11 +165,12 @@ CircularQueue<TInfo>::CircularQueue(int capacity){
 
 template <class TInfo>
 CircularQueue<TInfo>::~CircularQueue(){
-	delete[] this->array;
+	if(this->array)
+		delete[] this->array;
 }
 
 template <class TInfo>
-bool CircularQueue<TInfo>::isFull(){
+bool CircularQueue<TInfo>::isFull() const{
 	if (this->front != this->array)
 		return this->back==this->front-1;
 	else
@@ -176,11 +185,11 @@ void CircularQueue<TInfo>::clear(){
 
 
 template <class TInfo>
-bool CircularQueue<TInfo>::isEmpty(){
+bool CircularQueue<TInfo>::isEmpty() const{
 	return this->front == this->back;
 }
 template <class TInfo>
-int CircularQueue<TInfo>::getLength(){
+int CircularQueue<TInfo>::getLength() const{
 	if (this->back >= this->front){
 		return (int)(this->back - this->front);
 	}
