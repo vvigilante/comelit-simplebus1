@@ -5,7 +5,7 @@
 extern bool server_ws_broadcast_bin(const uint8_t*, size_t);
 
 #define RATE 8000
-#define NUM_SAMPLES 1000
+#define NUM_SAMPLES 2000
 #define ADC_CHANNEL ADC1_CHANNEL_0 // GPIO 34
 
 static QueueHandle_t i2s_event_queue;
@@ -20,7 +20,7 @@ void audio_setup() {
             .channel_format = I2S_CHANNEL_FMT_ALL_LEFT,
             .communication_format = I2S_COMM_FORMAT_PCM,
             .intr_alloc_flags = 0,
-            .dma_buf_count = 4,
+            .dma_buf_count = 8,
             .dma_buf_len = 1000,
             .use_apll = 1,
         };
@@ -48,6 +48,7 @@ uint16_t i2s_read_buff[N_BUFS][NUM_SAMPLES];
 size_t bytes_read[N_BUFS];
 int cur_buf = 0;
 
+#define PRINT_CADENCY 64
 int n_read = 0;
 long last_ms = 0;
 
@@ -62,15 +63,16 @@ static const inline void audio_sampling() {
         cur_buf = (cur_buf+1) % N_BUFS;
         // Loogging
         n_read++;
-        if(n_read %10 == 0){
+        if(n_read %PRINT_CADENCY == 0){
           long now = millis();
-          LOG("inter-read time = %ld ms", (now-last_ms)/10 );
+          LOG("inter-read time = %ld ms", (now-last_ms)/PRINT_CADENCY );
           last_ms = now;
         }
     }
   }
 }
 
+uint16_t transmitbuf[NUM_SAMPLES/2];
 static const inline void audio_plotting() {
   int last_buf = cur_buf;
   int first_buf = (cur_buf+1)%N_BUFS;
@@ -78,7 +80,12 @@ static const inline void audio_plotting() {
     size_t br = bytes_read[i];
     uint16_t* buf = i2s_read_buff[i];
     if(br>0){
-      server_ws_broadcast_bin((const uint8_t*)buf, br);
+      uint16_t* endbuf = buf+NUM_SAMPLES;
+      uint16_t *ps, *pd;
+      for(ps=buf, pd=transmitbuf; ps<endbuf; ps+=2, pd++){
+          *pd = *ps;
+      }
+      server_ws_broadcast_bin((const uint8_t*)transmitbuf, NUM_SAMPLES/2);
       bytes_read[i] = 0;
     }
   }
