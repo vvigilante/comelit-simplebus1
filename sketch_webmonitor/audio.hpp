@@ -74,6 +74,7 @@ static const inline void audio_sampling() {
 
 uint16_t transmitbuf[NUM_SAMPLES/2];
 static const inline void audio_plotting() {
+  int nbufferssent = 0;
   int last_buf = cur_buf;
   int first_buf = (cur_buf+1)%N_BUFS;
   for(int i=first_buf; i!=last_buf; i=(i+1)%N_BUFS){
@@ -87,6 +88,10 @@ static const inline void audio_plotting() {
       }
       server_ws_broadcast_bin((const uint8_t*)transmitbuf, NUM_SAMPLES/2);
       bytes_read[i] = 0;
+      nbufferssent++;
+    }
+    if(nbufferssent>=N_BUFS-1){
+        LOG("%d bufs were sent", nbufferssent );
     }
   }
 }
