@@ -117,7 +117,7 @@ void SimplebusReceiver::disableReceiver(){
 }
 void SimplebusReceiver::enableReceiver(){
   pinMode(this->bus_pin, INPUT);
-  attachInterrupt(digitalPinToInterrupt(this->bus_pin), SimplebusReceiver::busCallbackAdapter, FALLING);
+  attachInterrupt(digitalPinToInterrupt(this->bus_pin), SimplebusReceiver::busCallbackAdapter, RISING);
   if(DEBUG){
     LOG("Receiver enabled.");
     logger->flush();

@@ -5,16 +5,28 @@ If you live in an older building with an audio-only door phone based on the Simp
 - If you are interested in the project, please get in touch! Your expertise is appreciated.
 ```
 
-## Usage
+## Content of the repository
+| Dir | Content 
+------- | --- 
+| libsimplebus | Arduino library that allows to interface with the digital bus 
+| sketch_webmonitor | Arduino sketch that implements a websocket based https interface that logs what happens on the bus, including digital messages and analog audio. It also allows to make calls on the bus. 
+| other | partial stuff, pending cleanup 
+
+## Wiring
 
 Wire according to the wiring diagram; **mind the polarity of the bus!**
 
-Note: the image is old, we are now using a different microcontroller (different pins). Check the sketch.
+![](sketch_webmonitor/wiring.gif)
 
-![](wiring.gif)
 
-The test sketch contains a SimpleBus class, which allows to receive and send commands on the bus.
-The test sketch will print a log on the serial of the messages received on the bus.
+## Protocol
+
+The protocol features a ~24V bus. The units communicate through a digital protocol, by shorting the bus to produce short and long pulses.
+
+Digital messages are composed of a 6 bit command, 8 bit "internal unit id" and 4 bit checksum. The start of a message is signaled by a longer pulse.
+The recipient acknowledges every message by sending a sequence of three short pulses.
+
+The audio is sent back and forth as an analog signal in base band on the bus itself once the communication has been established. Its peak-to-peak amplitude is about 2.5 volts.
 
 Example of a communication
 ```
@@ -53,7 +65,7 @@ TODO list:
 - [x] Adding wifi communication
 - [x] Implementing sleep
 - [ ] Intercom protocol implementation (to be tested)
-- [ ] Recording audio through the microcontroller ADC
+- [X] Recording audio through the microcontroller ADC
 - [ ] Transmitting audio through a DAC
 - [ ] Web/cloud interface
 
