@@ -52,7 +52,7 @@ void makeCall(int userid){
 
 static void audioTask(void * pvParameters){
   while(1){
-      vTaskDelay(pdMS_TO_TICKS(10));
+      vTaskDelay(pdMS_TO_TICKS(1));
       audio_sampling();
   }
 }

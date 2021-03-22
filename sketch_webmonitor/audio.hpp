@@ -18,10 +18,10 @@ void audio_setup() {
             .sample_rate = RATE,
             .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
             .channel_format = I2S_CHANNEL_FMT_ALL_LEFT,
-            .communication_format = I2S_COMM_FORMAT_PCM,
-            .intr_alloc_flags = 0,
+            .communication_format = I2S_COMM_FORMAT_I2S_MSB,
+            .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
             .dma_buf_count = 8,
-            .dma_buf_len = 1000,
+            .dma_buf_len = 1024,
             .use_apll = 1,
         };
     ret = adc1_config_channel_atten(ADC_CHANNEL, ADC_ATTEN_11db);
@@ -43,7 +43,7 @@ void audio_setup() {
     vTaskDelay(1000);
 }
 
-#define N_BUFS 4
+#define N_BUFS 8
 uint16_t i2s_read_buff[N_BUFS][NUM_SAMPLES];
 size_t bytes_read[N_BUFS];
 int cur_buf = 0;
@@ -54,21 +54,17 @@ long last_ms = 0;
 
 static const inline void audio_sampling() {
   system_event_t evt;
-  if (xQueueReceive(i2s_event_queue, &evt, portMAX_DELAY) == pdPASS) {
-    if (evt.event_id==2) {
-        size_t br;
-        uint16_t* buf = i2s_read_buff[cur_buf];
-        int ret = i2s_read(I2S_NUM_0, ((char *)buf), NUM_SAMPLES * sizeof(uint16_t), &br, portMAX_DELAY);
-        bytes_read[cur_buf] = br;
-        cur_buf = (cur_buf+1) % N_BUFS;
-        // Loogging
-        n_read++;
-        if(n_read %PRINT_CADENCY == 0){
-          long now = millis();
-          LOG("inter-read time = %ld ms", (now-last_ms)/PRINT_CADENCY );
-          last_ms = now;
-        }
-    }
+  size_t br;
+  uint16_t* buf = i2s_read_buff[cur_buf];
+  int ret = i2s_read(I2S_NUM_0, ((char *)buf), NUM_SAMPLES * sizeof(uint16_t), &br, portMAX_DELAY);
+  bytes_read[cur_buf] = br;
+  cur_buf = (cur_buf+1) % N_BUFS;
+  // Loogging
+  n_read++;
+  if(n_read %PRINT_CADENCY == 0){
+    long now = millis();
+    LOG("inter-read time = %ld ms", (now-last_ms)/PRINT_CADENCY );
+    last_ms = now;
   }
 }
 
@@ -86,7 +82,7 @@ static const inline void audio_plotting() {
       for(ps=buf, pd=transmitbuf; ps<endbuf; ps+=2, pd++){
           *pd = *ps;
       }
-      server_ws_broadcast_bin((const uint8_t*)transmitbuf, NUM_SAMPLES/2);
+      server_ws_broadcast_bin((const uint8_t*)transmitbuf, sizeof(uint16_t)*NUM_SAMPLES/2);
       bytes_read[i] = 0;
       nbufferssent++;
     }
