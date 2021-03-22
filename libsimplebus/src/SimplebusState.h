@@ -40,7 +40,7 @@ class SimplebusState{
 
         }
         uint16_t get_userid() const{
-            return userid;
+            return SimplebusMessage::idFromInt(userid);
         } 
         bus_state_t get_state() const{
             return state;
