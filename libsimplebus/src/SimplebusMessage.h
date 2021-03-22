@@ -43,10 +43,10 @@
 // Reception times
 #define START_PULSE_DURATION_MIN_MS 14
 #define START_PULSE_DURATION_MAX_MS 23
-#define SHORT_PULSE_DURATION_MIN_MS  2
+#define SHORT_PULSE_DURATION_MIN_MS  4
 #define SHORT_PULSE_DURATION_MAX_MS  7
 #define LONG_PULSE_DURATION_MIN_MS   8
-#define LONG_PULSE_DURATION_MAX_MS  10
+#define LONG_PULSE_DURATION_MAX_MS  11
 
 #define MAX_MESSAGE_IDLE_MS 70 /**< Abort receiving message if no signal for this amount of milliseconds */
 
