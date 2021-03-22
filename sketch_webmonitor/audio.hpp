@@ -48,9 +48,11 @@ uint16_t i2s_read_buff[N_BUFS][NUM_SAMPLES];
 size_t bytes_read[N_BUFS];
 int cur_buf = 0;
 
-#define PRINT_CADENCY 64
-int n_read = 0;
-long last_ms = 0;
+#ifdef DEBUG_AUDIO
+  #define PRINT_CADENCY 64
+  int n_read = 0;
+  long last_ms = 0;
+#endif
 
 static const inline void audio_sampling() {
   system_event_t evt;
@@ -59,13 +61,17 @@ static const inline void audio_sampling() {
   int ret = i2s_read(I2S_NUM_0, ((char *)buf), NUM_SAMPLES * sizeof(uint16_t), &br, portMAX_DELAY);
   bytes_read[cur_buf] = br;
   cur_buf = (cur_buf+1) % N_BUFS;
-  // Loogging
-  n_read++;
-  if(n_read %PRINT_CADENCY == 0){
-    long now = millis();
-    LOG("inter-read time = %ld ms", (now-last_ms)/PRINT_CADENCY );
-    last_ms = now;
+  #ifdef DEBUG_AUDIO
+  {
+    // Loogging
+    n_read++;
+    if(n_read %PRINT_CADENCY == 0){
+      long now = millis();
+      LOG("inter-read time = %ld ms", (now-last_ms)/PRINT_CADENCY );
+      last_ms = now;
+    }
   }
+  #endif
 }
 
 uint16_t transmitbuf[NUM_SAMPLES/2];
