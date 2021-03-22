@@ -4,7 +4,7 @@ extern bool server_ws_broadcast(const char* );
 #ifndef WEBSOCKETLOGGER_H_ 
 #define WEBSOCKETLOGGER_H_  
 
-#define BUF_SIZE_DEFAULT 1024
+#define BUF_SIZE_DEFAULT 4096
 #define MIN_TIME_BETWEEN_FLUSH_MS_DEFAULT 1000
 
 class WebsocketLogger : public Logger{
