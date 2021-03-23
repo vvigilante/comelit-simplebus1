@@ -2,8 +2,9 @@
 <html>
 
 <head>
+    <link rel="preload" href="cq.js">  
+    <link rel="preload" href="wsworklet.js">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.js"></script>
     <link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRFIpT/////FT68wQAAAAJ0Uk5T/wDltzBKAAAAPUlEQVR42pTNQQoAIAhE0T/3v3RiWeOiIKHFf4ghG4jXOoTeDvxDkp6QfQN2T8jrBqyp5dYGkp87nw0BBgBjdwCy1WNbbQAAAABJRU5ErkJggg==" rel="icon" type="image/png" /> 
     <style>
         .state1{
@@ -87,36 +88,42 @@
         }
     </style>
     <script>
-
-        const MAX_DATA_POINTS = 64000;
-        var chart = null;
-        var yVal , xVal = 0;
-        var dataPoints = [];
-        var nupd=0;
-        function updateChart(d) {
-            for(i=0; i<d.length; i++){
-                yVal = d[i];
-                dataPoints.push({
-                    y : yVal,
-                    x : xVal--
-                });
-                if (dataPoints.length >  MAX_DATA_POINTS ){
-                    dataPoints.shift();
+        var snd = new Audio("data:audio/mp3;base64,/+NIxAAAAAAAAAAAAFhpbmcAAAAPAAAABAAAA2AAgICAgICAgICAgICAgICAgICAgICAgICAoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4OD/////////////////////////////////AAAACkxBTUUzLjEwMAQoAAAAAAAAAAAVCCQC8SEAAZoAAANg6nK+XgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+NIxAAGiALTAUAAAYmHQG0AAPDw8PSAAAAf4eH/EZzD/j///0PHqrykRzMMuMsLsIk/zKn1hb8M7ePf7xxx1lrdWt/7xrMqMsMTA2FBYfqImHzZrErzpMoDVAXKcpygjpa9Ih6njjkav81346/sM00ajVWlhqU2p69b7h/////0ugoFJBRekGUW29W7BlTdu6CrjcNxd+O9xo5U/z/Vf/CkkTvTkEY1qsM8l5gyEUfYEEzgVQx7jEoeroXH//CAEJBuqZPSHKnS2qZRRmTXpSm/HnjaSGFAyCv7pvCQNRUFakxBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqTEFNRTMu/+MYxPgYgULPAZrAATEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/+MoxNEV0QrjAZp4AKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/+MYxMQAAAP8AcAAAKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
+        function ringOnce(){
+            snd.play();
+        }
+        function ring(){
+            for(i=0; i<5000; i+=1000)
+                setTimeout(ringOnce, i);
+        }
+        function drawAudio(dataArray){
+            bufferLength = dataArray.length;
+            const canvas = document.getElementById('audioCanvas');
+            WIDTH=canvas.width;
+            HEIGHT=canvas.height;
+            canvasCtx = canvas.getContext('2d');
+            canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+            canvasCtx.fillStyle = 'rgb(50, 50, 50)';
+            canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+            canvasCtx.lineWidth = 2;
+            canvasCtx.strokeStyle = 'rgb(0, 255, 0)';
+            canvasCtx.beginPath();
+            const STEP = 2;
+            var sliceWidth = WIDTH * 1.0 * STEP / bufferLength;
+            var x = 0;
+            for(var i = 0; i < bufferLength; i+=STEP) {
+                var v = dataArray[i] / 255.0;
+                var y = v * HEIGHT;
+                if(i === 0) {
+                    canvasCtx.moveTo(x, y);
+                } else {
+                    canvasCtx.lineTo(x, y);
                 }
+                x += sliceWidth;
             }
-            nupd++;
-            if(nupd%16==0)
-                chart.render();
+            canvasCtx.stroke();
         }
 
-
-        function array_avg(elmt){
-            var sum = 0;
-            for( var i = 0; i < elmt.length; i++ ){
-                sum += elmt[i];
-            }
-            return sum/elmt.length;
-        }
         const statestrings = {
           'state1':'CLEAR',  
           'state2':'CALL_REQ', 
@@ -173,24 +180,10 @@
 
 
         $(function(){
-            /* CHART */
-            chart = new CanvasJS.Chart("chartContainer", {
-                zoomEnabled: true,
-                data : [{
-                        type : "line",
-                        dataPoints : dataPoints
-                    }
-                ],
-                axisY:{
-                    minimum: -1,
-                    maximum: 4500
-                },
-            });
-            chart.render();
-
             /* WEBSOCKET */
 
             webSocket1 = new WebSocket('wss://' + window.location.hostname + '/ws');
+            /*webSocket1 = new WebSocket('wss://10.10.10.15/ws');*/
             webSocket1.addEventListener('open', function (event) {
                 console.log("Connected.");
                 $("#connection-status").html('OK');
@@ -203,17 +196,19 @@
                 $("#connection-status").removeClass();
                 $("#connection-status").addClass('conn-ko');
             });
-            var last_chunk_times = [];
+            var last_chunk_time_avg = 0;
+            var last_chunk_time_num = 0;
             var last_chunk_time = null;
             webSocket1.onmessage = function (a) {
                 var t = a.data;
                 if(t instanceof Blob){
                     /* Process data */
                     t.arrayBuffer().then(function(d){
-                        d = new Uint16Array(d);
+                        d = new Uint8Array(d);
                         if($("#update_chart_check").prop("checked")){
                             updateChart(d);
                         }
+                        drawAudio(d);
                         if(wssource){
                             wssource.p.postMessage(d);
                         }
@@ -221,9 +216,12 @@
                     /* Update diagnostics */
                     var new_chunk_time = Date.now();
                     if(last_chunk_time){
-                        last_chunk_times.push(new_chunk_time-last_chunk_time);
-                        $("#ic_time").html(new_chunk_time-last_chunk_time);
-                        $("#ic_time_avg").html(array_avg(last_chunk_times).toFixed(2));
+                        var elapsed = new_chunk_time-last_chunk_time;
+                        last_chunk_time_avg = (last_chunk_time_avg*last_chunk_time_num+elapsed)/(last_chunk_time_num+1);
+                        if(last_chunk_time_num<100)
+                            last_chunk_time_num++;
+                        $("#ic_time").html(elapsed);
+                        $("#ic_time_avg").html(last_chunk_time_avg.toFixed(2));
                     }
                     last_chunk_time = new_chunk_time;
                 }else if(t[0]=='L'){
@@ -246,6 +244,9 @@
                     $("#state").removeClass();
                     $("#state").addClass('state'+state);
                     $("#state").html(statestrings['state'+state]);
+                    if(state=='2'){
+                        ring();
+                    }
                 }
             };
             $('#makecall').click(function(){
@@ -282,8 +283,7 @@
             </tr>
         </table>
         <p class="log-title">Analog reading:</p>
-        <div id = "chartContainer" style = "height: 400px; width: 100%;"></div>
-        <label><input type="checkbox" id="update_chart_check" checked="checked" /> Update chart</label>
+        <canvas id="audioCanvas" width="500" height="200"></canvas>
         <button onClick="play()">PLAY AUDIO</button>
         <button onClick="stop()">STOP</button>
     </div>

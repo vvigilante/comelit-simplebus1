@@ -27,13 +27,11 @@ void audio_setup() {
     ret = adc1_config_channel_atten(ADC_CHANNEL, ADC_ATTEN_11db);
     assert(ret == ESP_OK);
 
-    ret = adc1_config_width(ADC_WIDTH_12Bit);
+    ret = adc1_config_width(ADC_WIDTH_9Bit);
     assert(ret == ESP_OK);
     ret = i2s_driver_install(I2S_NUM_0, &i2s_config, 1, &i2s_event_queue);
     assert(ret == ESP_OK);
     
-    //ret = i2s_set_clk(I2S_NUM_0, RATE, I2S_BITS_PER_SAMPLE_16BIT, I2S_CHANNEL_MONO);
-    //assert(ret == ESP_OK);
     ret = i2s_set_sample_rates(I2S_NUM_0, RATE);
     assert(ret == ESP_OK);
     
@@ -74,7 +72,7 @@ static const inline void audio_sampling() {
   #endif
 }
 
-uint16_t transmitbuf[NUM_SAMPLES/2];
+uint8_t transmitbuf[NUM_SAMPLES/2];
 static const inline void audio_plotting() {
   int nbufferssent = 0;
   int last_buf = cur_buf;
@@ -84,16 +82,17 @@ static const inline void audio_plotting() {
     uint16_t* buf = i2s_read_buff[i];
     if(br>0){
       uint16_t* endbuf = buf+NUM_SAMPLES;
-      uint16_t *ps, *pd;
+      uint16_t *ps;
+      uint8_t *pd;
       for(ps=buf, pd=transmitbuf; ps<endbuf; ps+=2, pd++){
-          *pd = *ps;
+          *pd = (*ps) >> 3;
       }
-      server_ws_broadcast_bin((const uint8_t*)transmitbuf, sizeof(uint16_t)*NUM_SAMPLES/2);
+      server_ws_broadcast_bin(transmitbuf, NUM_SAMPLES/2);
       bytes_read[i] = 0;
       nbufferssent++;
     }
     if(nbufferssent>=N_BUFS-1){
-        LOG("%d bufs were sent", nbufferssent );
+        LOG("%d bufs were sent; v0=%u->%u", nbufferssent, buf[0], transmitbuf[0]);
     }
   }
 }

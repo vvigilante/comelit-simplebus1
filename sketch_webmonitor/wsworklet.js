@@ -4,8 +4,8 @@ var logsampling = 0;
 class WSReceiver extends AudioWorkletProcessor {
     constructor(options) {
         super(options);
-        const BUF_SIZE = 16384;
-        this.LATENCY_SAMPLES = 4096;
+        const BUF_SIZE = 32768;
+        this.LATENCY_SAMPLES = 8192;
         this.underrun = true;
         this.samples = new CircularBuffer(BUF_SIZE);
         this.j = 0;
@@ -20,8 +20,8 @@ class WSReceiver extends AudioWorkletProcessor {
         }
         logsampling++;
         var d = event['data'];
-        const bias = 1000;
-        const scale = 1000;
+        const bias = 174;
+        const scale = 128;
         for (var i = 0; i < d.length; i++){
             var v = (d[i]-bias)/scale;
             this.samples.enqueue(v);
