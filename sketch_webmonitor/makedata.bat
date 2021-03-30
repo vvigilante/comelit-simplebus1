@@ -8,19 +8,4 @@ cat mtmp.html >> data.h
 echo. >>data.h
 echo )EOF^";>>data.h
 del mtmp.html
-
-cp wsworklet.js mtmp.js
-%MINIFY% mtmp.js --overwrite
-echo static const char wsworklet_js[] PROGMEM =  R^"EOF(>>data.h
-cat mtmp.js >> data.h
-echo. >>data.h
-echo )EOF^";>>data.h
-del mtmp.js
-
-cp cq.js mtmp.js
-%MINIFY% mtmp.js --overwrite
-echo static const char cq_js[] PROGMEM =  R^"EOF(>>data.h
-cat mtmp.js >> data.h
-echo. >>data.h
-echo )EOF^";>>data.h
-del mtmp.js
+exit

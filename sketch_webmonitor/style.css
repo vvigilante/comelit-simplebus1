@@ -1,0 +1,103 @@
+.state1 {
+    background-color: greenyellow;
+}
+
+.state8 {
+    background-color: green;
+}
+
+.state2 {
+    background-color: yellow;
+}
+
+.state3 {
+    background-color: orange;
+}
+
+.state6 {
+    background-color: orangered;
+    color: white;
+}
+
+.state7 {
+    background-color: brown;
+    color: white;
+}
+
+body {
+    font-family: monospace;
+    background-color: gray;
+    max-width: 1100px;
+    margin: auto;
+    padding: 10px;
+    font-size: 14px;
+    position: relative;
+}
+
+#state {
+    padding: 20px 0;
+    font-size: 28px;
+    border-radius: 10px;
+    margin: 20px;
+}
+
+#state-box {
+    display: inline-block;
+    width: 28%;
+    padding: 20px 0;
+    text-align: center;
+    background-color: whitesmoke;
+    position: absolute;
+}
+
+#log-box {
+    margin-left: 31%;
+    display: inline-block;
+    width: 69%;
+    background-color: whitesmoke;
+}
+
+.log-title {
+    padding: 10px;
+    margin: 0;
+}
+
+#log {
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    padding: 10px;
+}
+
+hr {
+    margin: 30px;
+}
+
+.conn-ok {
+    color: green;
+    font-weight: bold;
+}
+
+.conn-ko {
+    color: maroon;
+    font-weight: bold;
+}
+
+@keyframes colorfade {
+    0% {
+        background-color: #fdd;
+    }
+    10% {
+        background-color: #ebb;
+    }
+    50% {
+        background-color: #ebb;
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+#log tr {
+    animation: colorfade 5s;
+}

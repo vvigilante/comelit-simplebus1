@@ -14,13 +14,15 @@ SSLCert cert = SSLCert(
   example_crt_DER, example_crt_DER_len,
   example_key_DER, example_key_DER_len
 );
-#define MAX_CLIENTS 4
+#define MAX_CLIENTS 2
 
 
 HTTPSServer secureServer = HTTPSServer(&cert, 443, MAX_CLIENTS);
 void handleRoot(HTTPRequest * req, HTTPResponse * res);
-void handleCq(HTTPRequest * req, HTTPResponse * res);
+/*void handleCq(HTTPRequest * req, HTTPResponse * res);
 void handleWsworklet(HTTPRequest * req, HTTPResponse * res);
+void handleScript(HTTPRequest * req, HTTPResponse * res);
+void handleStyle(HTTPRequest * req, HTTPResponse * res);*/
 void handleMakeCall(HTTPRequest * req, HTTPResponse * res);
 void handle404(HTTPRequest * req, HTTPResponse * res);
 
@@ -36,14 +38,19 @@ MyWsHandler* activeClients[MAX_CLIENTS] = {NULL};
 void server_setup() {
   for(int i = 0; i < MAX_CLIENTS; i++) activeClients[i] = nullptr;
   ResourceNode * nodeRoot    = new ResourceNode("/", "GET", &handleRoot);
+  /*ResourceNode * nodeStyle = new ResourceNode("/style.css", "GET", &handleStyle);
+  ResourceNode * nodeScript = new ResourceNode("/script.js", "GET", &handleScript);
   ResourceNode * nodeCq    = new ResourceNode("/cq.js", "GET", &handleCq);
-  ResourceNode * nodeWsworklet    = new ResourceNode("/wsworklet.js", "GET", &handleWsworklet);
+  ResourceNode * nodeWsworklet    = new ResourceNode("/wsworklet.js", "GET", &handleWsworklet);*/
   ResourceNode * nodemakeCall    = new ResourceNode("/makeCall", "POST", &handleMakeCall);
   ResourceNode * node404     = new ResourceNode("", "GET", &handle404);
   secureServer.registerNode(nodeRoot);
   secureServer.registerNode(nodemakeCall);
-  secureServer.registerNode(nodeWsworklet);
-  secureServer.registerNode(nodeCq);
+  /*secureServer.registerNode(nodeWsworklet);
+  secureServer.registerNode(nodemakeCall);
+  secureServer.registerNode(nodeScript);
+  secureServer.registerNode(nodeStyle);
+  secureServer.registerNode(nodeCq);*/
   secureServer.setDefaultNode(node404);
 
   WebsocketNode * wsNode = new WebsocketNode("/ws", &MyWsHandler::create);
@@ -71,16 +78,30 @@ void handle404(HTTPRequest * req, HTTPResponse * res) {
 
 void handleRoot(HTTPRequest * req, HTTPResponse * res) {
   res->setHeader("Content-Type", "text/html");
+  res->setHeader("Connection", "close");
+  res->setHeader("Access-Control-Allow-Origin", "*");
   res->print( index_html );
+}/*
+void handleScript(HTTPRequest * req, HTTPResponse * res){
+  res->setHeader("Content-Type", "application/javascript");
+  res->setHeader("Connection", "close");
+  res->print( script_js );
+}
+void handleStyle(HTTPRequest * req, HTTPResponse * res){
+  res->setHeader("Content-Type", "text/css");
+  res->setHeader("Connection", "close");
+  res->print( style_css );
 }
 void handleCq(HTTPRequest * req, HTTPResponse * res) {
   res->setHeader("Content-Type", "application/javascript");
+  res->setHeader("Connection", "close");
   res->print( cq_js );
 }
 void handleWsworklet(HTTPRequest * req, HTTPResponse * res) {
   res->setHeader("Content-Type", "application/javascript");
+  res->setHeader("Connection", "close");
   res->print( wsworklet_js );
-}
+}*/
 
 void handleMakeCall(HTTPRequest * req, HTTPResponse * res){
   HTTPURLEncodedBodyParser parser(req);
@@ -121,7 +142,12 @@ void MyWsHandler::onClose() {
 }
 
 void MyWsHandler::onMessage(WebsocketInputStreambuf * inbuf) {
-  // Do nothing
+    if(inbuf->getRecordSize()!=NUM_SAMPLES){
+        LOG("Invalid size received %u expected %u", inbuf->getRecordSize(), NUM_SAMPLES);
+    }
+    unsigned char mydata[NUM_SAMPLES];
+    inbuf->sgetn((char*)mydata, NUM_SAMPLES);
+    audio_recv_from_ws(mydata, NUM_SAMPLES);
 }
 
 int get_num_connected_clients(){
