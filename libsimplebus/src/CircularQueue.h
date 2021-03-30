@@ -191,9 +191,9 @@ bool CircularQueue<TInfo>::isEmpty() const{
 template <class TInfo>
 int CircularQueue<TInfo>::getLength() const{
 	if (this->back >= this->front){
-		return (int)(this->back - this->front);
+		return (int)((this->back - this->front)/sizeof(TInfo));
 	}
-	return (int)( this->back - this->array + this->array_limit - this->front );
+	return (int)(( this->back - this->array + this->array_limit - this->front )/sizeof(TInfo));
 }
 
 template <class TInfo>
