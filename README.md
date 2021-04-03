@@ -1,22 +1,24 @@
 # Comelit Simplebus 1 compatible smart audio intercom
 If you live in an older building with an audio-only door phone based on the SimpleBus version 1, you may have no choice for upgrading to a smart alternative. This project aims to build an open implementation of a smart doorphone compatible with the comelit simplebus 1 audio protocol, to replace ordinary units such as 2408w/a, 2708W and 2xx8W in general.
 
-```diff
-- If you are interested in the project, please get in touch! Your expertise is appreciated.
-```
+TODO:
 
 ## Content of the repository
 | Dir | Content 
 ------- | --- 
 | libsimplebus | Arduino library that allows to interface with the digital bus 
-| sketch_webmonitor | Arduino sketch that implements a websocket based https interface that logs what happens on the bus, including digital messages and analog audio. It also allows to make calls on the bus. 
+| sketch_webmonitor | Arduino sketch that implements a websocket based https interface that logs the messages on the bus, allows to listen to the audio signal and to transmit audio signals from the computer mic. It also allows to initiate calls on the bus, useful for testing. 
 | other | partial stuff, pending cleanup 
+
 
 ## Wiring
 
 Wire according to the wiring diagram; **mind the polarity of the bus!**
 
 ![](sketch_webmonitor/wiring.gif)
+
+Tested on Wemos D1 mini32 (esp32 arduino core 1.0.5).
+
 
 
 ## Protocol
@@ -50,24 +52,6 @@ time: [69.289s] message: [111111 11111111 0111 - CLEAR 255 chkOK]
 time: [69.626s] message: [111111 11111111 0111 - CLEAR 255 chkOK]
 time: [69.963s] message: [111111 11111111 0111 - CLEAR 255 chkOK]
 ```
-
-
-## State of the project
-Tested on Wemos D1 mini32 (esp32 arduino core 1.0.5).
-
-TODO list:
-- [ ] ~~Getting power from the bus~~ (it appears that there is not enough power)
-- [x] Receiving messages from the bus
-- [x] Sending messages on the bus
-- [x] Listening to analog audio on the bus
-- [X] Transmitting analog audio on the bus
-- [x] Porting on Wemos D1
-- [x] Adding wifi communication
-- [x] Implementing sleep
-- [ ] Intercom protocol implementation (to be tested)
-- [X] Recording audio through the microcontroller ADC
-- [ ] Transmitting audio through a DAC
-- [ ] Web/cloud interface
 
 
 ## Acknowledgements
