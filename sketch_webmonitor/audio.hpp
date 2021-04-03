@@ -3,8 +3,6 @@
 #include <soc/syscon_reg.h>
 #include "CircularQueue.h"
 
-#define DEBUG_AUDIO
-
 extern bool server_ws_broadcast_bin(const uint8_t*, size_t);
 
 #define N_BUFS 4
@@ -32,7 +30,7 @@ void audio_setup() {
             .channel_format = I2S_CHANNEL_FMT_ALL_LEFT,
             .communication_format = I2S_COMM_FORMAT_I2S_MSB,
             .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-            .dma_buf_count = 8,
+            .dma_buf_count = 4,
             .dma_buf_len = 1024,
             .use_apll = 1,
         };
@@ -117,7 +115,7 @@ static const inline void audio_readbus() {
 }
 
 static const inline void audio_recv_from_ws(unsigned char* data, size_t len) {
-  buf8_t buf8;
+  static buf8_t buf8;
   if(len!=NUM_SAMPLES){
     LOG("audio_recvws unexpected size %u != %u", len, NUM_SAMPLES);
     return;

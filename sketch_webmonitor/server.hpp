@@ -19,11 +19,8 @@ SSLCert cert = SSLCert(
 
 HTTPSServer secureServer = HTTPSServer(&cert, 443, MAX_CLIENTS);
 void handleRoot(HTTPRequest * req, HTTPResponse * res);
-/*void handleCq(HTTPRequest * req, HTTPResponse * res);
-void handleWsworklet(HTTPRequest * req, HTTPResponse * res);
-void handleScript(HTTPRequest * req, HTTPResponse * res);
-void handleStyle(HTTPRequest * req, HTTPResponse * res);*/
 void handleMakeCall(HTTPRequest * req, HTTPResponse * res);
+void handleSetMic(HTTPRequest * req, HTTPResponse * res);
 void handle404(HTTPRequest * req, HTTPResponse * res);
 
 class MyWsHandler : public WebsocketHandler {
@@ -38,19 +35,12 @@ MyWsHandler* activeClients[MAX_CLIENTS] = {NULL};
 void server_setup() {
   for(int i = 0; i < MAX_CLIENTS; i++) activeClients[i] = nullptr;
   ResourceNode * nodeRoot    = new ResourceNode("/", "GET", &handleRoot);
-  /*ResourceNode * nodeStyle = new ResourceNode("/style.css", "GET", &handleStyle);
-  ResourceNode * nodeScript = new ResourceNode("/script.js", "GET", &handleScript);
-  ResourceNode * nodeCq    = new ResourceNode("/cq.js", "GET", &handleCq);
-  ResourceNode * nodeWsworklet    = new ResourceNode("/wsworklet.js", "GET", &handleWsworklet);*/
-  ResourceNode * nodemakeCall    = new ResourceNode("/makeCall", "POST", &handleMakeCall);
+  ResourceNode * nodeMakeCall    = new ResourceNode("/makeCall", "POST", &handleMakeCall);
+  ResourceNode * nodeSetMic    = new ResourceNode("/setMic", "POST", &handleSetMic);
   ResourceNode * node404     = new ResourceNode("", "GET", &handle404);
   secureServer.registerNode(nodeRoot);
-  secureServer.registerNode(nodemakeCall);
-  /*secureServer.registerNode(nodeWsworklet);
-  secureServer.registerNode(nodemakeCall);
-  secureServer.registerNode(nodeScript);
-  secureServer.registerNode(nodeStyle);
-  secureServer.registerNode(nodeCq);*/
+  secureServer.registerNode(nodeMakeCall);
+  secureServer.registerNode(nodeSetMic);
   secureServer.setDefaultNode(node404);
 
   WebsocketNode * wsNode = new WebsocketNode("/ws", &MyWsHandler::create);
@@ -74,6 +64,7 @@ void handle404(HTTPRequest * req, HTTPResponse * res) {
   res->setStatusText("Not Found");
   res->setHeader("Content-Type", "text/html");
   res->println("<!DOCTYPE html><html><head><title>Not Found</title></head><body><h1>404 Not Found</h1><p>The requested resource was not found on this server.</p></body></html>");
+  res->finalize();
 }
 
 void handleRoot(HTTPRequest * req, HTTPResponse * res) {
@@ -81,27 +72,7 @@ void handleRoot(HTTPRequest * req, HTTPResponse * res) {
   res->setHeader("Connection", "close");
   res->setHeader("Access-Control-Allow-Origin", "*");
   res->print( index_html );
-}/*
-void handleScript(HTTPRequest * req, HTTPResponse * res){
-  res->setHeader("Content-Type", "application/javascript");
-  res->setHeader("Connection", "close");
-  res->print( script_js );
 }
-void handleStyle(HTTPRequest * req, HTTPResponse * res){
-  res->setHeader("Content-Type", "text/css");
-  res->setHeader("Connection", "close");
-  res->print( style_css );
-}
-void handleCq(HTTPRequest * req, HTTPResponse * res) {
-  res->setHeader("Content-Type", "application/javascript");
-  res->setHeader("Connection", "close");
-  res->print( cq_js );
-}
-void handleWsworklet(HTTPRequest * req, HTTPResponse * res) {
-  res->setHeader("Content-Type", "application/javascript");
-  res->setHeader("Connection", "close");
-  res->print( wsworklet_js );
-}*/
 
 void handleMakeCall(HTTPRequest * req, HTTPResponse * res){
   HTTPURLEncodedBodyParser parser(req);
@@ -115,10 +86,33 @@ void handleMakeCall(HTTPRequest * req, HTTPResponse * res){
   }
   req->discardRequestBody();
   res->setHeader("Content-Type", "application/json");
+  res->setHeader("Access-Control-Allow-Origin", "*");
+  res->setHeader("Connection", "close");
   makeCall(atoi(id_str));
-  res->print( "{'status':'ok', 'id':");
+  res->print( "{\"status\":\"ok\", \"id\":");
   res->print(id_str);
   res->println("}");
+  res->finalize();
+}
+void handleSetMic(HTTPRequest * req, HTTPResponse * res){
+  HTTPURLEncodedBodyParser parser(req);
+  const int max_state_str_len = 3;
+  char state_str[max_state_str_len] = {'\0'};
+  while(parser.nextField()) {
+      std::string name = parser.getFieldName();
+      if (name == "state") {
+        size_t readLength = parser.read((byte *)state_str, max_state_str_len-1);
+      }
+  }
+  req->discardRequestBody();
+  res->setHeader("Content-Type", "application/json");
+  res->setHeader("Access-Control-Allow-Origin", "*");
+  res->setHeader("Connection", "close");
+  setMic( atoi(state_str) );
+  res->print( "{\"status\":\"ok\", \"state\":");
+  res->print(state_str);
+  res->println("}");
+  res->finalize();
 }
 
 WebsocketHandler * MyWsHandler::create() {

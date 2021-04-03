@@ -6,6 +6,7 @@
 #include "WebsocketLogger.h"
 #include "SerialLogger.h"
 void makeCall(int userid);
+void setMic(int state);
 #include "audio.hpp"
 #include "server.hpp"
 #include <ArduinoOTA.h>
@@ -18,6 +19,7 @@ void makeCall(int userid);
 #define BUS_RECEIVE_PIN      GPIO_NUM_5
 #define BUS_TRANSMIT_PIN     GPIO_NUM_18
 #define LED_BUILTIN          GPIO_NUM_2
+#define MIC_ENABLE_PIN       GPIO_NUM_15
 /* Wifi settings */
 #define WIFI_SSID "your-ssid"
 #define WIFI_PASS "your-password"
@@ -31,6 +33,7 @@ struct SimplebusMessageStamped{
     }
 };
 
+bool mic_enabled = 0;
 Simplebus* sb = NULL;
 SimplebusIntercom* sbi = NULL;
 SimplebusState state;
@@ -50,6 +53,11 @@ static void callTask(void* pvParameters){
 void makeCall(int userid){
   usertocall = userid;
 }
+void setMic(int state){
+  LOG("Mic enable: %d", state);
+  mic_enabled = state;
+  digitalWrite(MIC_ENABLE_PIN, state);
+}
 
 static void audioreadTask(void * pvParameters){
   while(1){
@@ -57,13 +65,19 @@ static void audioreadTask(void * pvParameters){
       audio_readbus();
   }
 }
-static void audiorecvtestTask(void * pvParameters){
-  const size_t len = 1000;
-  uint8_t data[len] = {127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111,127,143,159,174,188,202,214,225,234,242,248,252,254,254,252,248,242,234,225,214,202,188,174,159,143,127,111,95,80,66,52,40,29,20,12,6,2,0,0,2,6,12,20,29,40,52,66,80,95,111};
-  audio_recv_from_ws(data, len);
+static void ledTask(void * pvParameters){
   while(1){
-      audio_recv_from_ws(data, len);
-      vTaskDelay(pdMS_TO_TICKS(125));
+      digitalWrite(LED_BUILTIN, LOW);
+      int duty = 970;
+      if (WiFi.status() != WL_CONNECTED) {
+          duty = 500;
+      }
+      if(mic_enabled){
+          duty = 20;
+      }
+      vTaskDelay(pdMS_TO_TICKS(duty));
+      digitalWrite(LED_BUILTIN, HIGH);
+      vTaskDelay(pdMS_TO_TICKS(1000-duty));
   }
 }
 static void audiowriteTask(void * pvParameters){
@@ -114,8 +128,14 @@ static void busTask(void * pvParameters){
 }
 
 void setup(){
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(MIC_ENABLE_PIN, 0);
+  pinMode(MIC_ENABLE_PIN, OUTPUT);
   //logger = new WebsocketLogger();
   logger = new SerialLogger(115200);
+  
+  xTaskCreatePinnedToCore ( ledTask, "ledTask", 512, NULL, 31, &th5, 1 );
+  
   sb = new Simplebus(BUS_RECEIVE_PIN, BUS_TRANSMIT_PIN);
   sbi = new SimplebusIntercom(sb, 0);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
@@ -128,15 +148,14 @@ void setup(){
   LOG("IP: %s", WiFi.localIP().toString().c_str());
   server_setup();
   audio_setup();
-  xTaskCreatePinnedToCore ( busTask, "busTask", 4096, NULL, 29, &th0, 0 );
-  xTaskCreatePinnedToCore ( callTask, "callTask", 4096, NULL, 30, &th1, 0 );
-  xTaskCreatePinnedToCore ( audioreadTask, "audioreadTask", 4096, NULL, 31, &th2, 0 );
-  xTaskCreatePinnedToCore ( audiowriteTask, "audiowriteTask", 4096, NULL, 31, &th3, 0 );
-  xTaskCreatePinnedToCore ( serverTask, "serverTask", 6144, NULL, 31, &th4, 1 );
-  //xTaskCreatePinnedToCore ( audiorecvtestTask, "audiorecvtestTask", 10000, NULL, 31, &th5, 1 );
+  xTaskCreatePinnedToCore ( busTask, "busTask", 1024, NULL, 29, &th0, 0 );
+  xTaskCreatePinnedToCore ( callTask, "callTask", 512, NULL, 30, &th1, 0 );
+  xTaskCreatePinnedToCore ( audioreadTask, "audioreadTask", 2048, NULL, 30, &th2, 0 );
+  xTaskCreatePinnedToCore ( audiowriteTask, "audiowriteTask", 2048, NULL, 30, &th3, 0 );
+  xTaskCreatePinnedToCore ( serverTask, "serverTask", 4096, NULL, 30, &th4, 1 );
   ArduinoOTA.begin();
-  LOG("Init ok");
-  
+  // Make sure there is at least 60k per connection (2 in our case -> 120k)
+  LOG("Init ok, free heap: %lu", heap_caps_get_free_size(MALLOC_CAP_8BIT));
 }
 
 void sendmessage(SimplebusMessageStamped* element){
@@ -147,6 +166,5 @@ void sendmessage(SimplebusMessageStamped* element){
 }
 
 void loop(){
-  LOG("free:%lu block:%lu",heap_caps_get_free_size(MALLOC_CAP_DEFAULT), heap_caps_get_largest_free_block(MALLOC_CAP_DEFAULT));
-  delay(1000);
+  vTaskDelay(pdMS_TO_TICKS(500));
 }

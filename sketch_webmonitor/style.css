@@ -101,3 +101,7 @@ hr {
 #log tr {
     animation: colorfade 5s;
 }
+
+.active-btn {
+    background-color: darkseagreen;
+}

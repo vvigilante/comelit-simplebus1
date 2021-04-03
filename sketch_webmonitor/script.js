@@ -1,3 +1,11 @@
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+var addr = window.location.hostname;
+if (urlParams.has('addr')) {
+    addr = urlParams.get('addr');
+}
+
+
 var snd = new Audio("data:audio/mp3;base64,/+NIxAAAAAAAAAAAAFhpbmcAAAAPAAAABAAAA2AAgICAgICAgICAgICAgICAgICAgICAgICAoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4OD/////////////////////////////////AAAACkxBTUUzLjEwMAQoAAAAAAAAAAAVCCQC8SEAAZoAAANg6nK+XgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+NIxAAGiALTAUAAAYmHQG0AAPDw8PSAAAAf4eH/EZzD/j///0PHqrykRzMMuMsLsIk/zKn1hb8M7ePf7xxx1lrdWt/7xrMqMsMTA2FBYfqImHzZrErzpMoDVAXKcpygjpa9Ih6njjkav81346/sM00ajVWlhqU2p69b7h/////0ugoFJBRekGUW29W7BlTdu6CrjcNxd+O9xo5U/z/Vf/CkkTvTkEY1qsM8l5gyEUfYEEzgVQx7jEoeroXH//CAEJBuqZPSHKnS2qZRRmTXpSm/HnjaSGFAyCv7pvCQNRUFakxBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqTEFNRTMu/+MYxPgYgULPAZrAATEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/+MoxNEV0QrjAZp4AKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq/+MYxMQAAAP8AcAAAKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
 
 function ringOnce() {
@@ -214,6 +222,7 @@ async function play() {
         wssource = new WSSourceNode(webSocket1);
     }
     wssource.connect(audioCtx.destination);
+    $(".play-btn").addClass("active-btn");
 };
 async function rec() {
     await initCtx();
@@ -226,6 +235,12 @@ async function rec() {
         wssink = new WSSinkNode(webSocket1);
     }
     micsource.connect(wssink);
+    $.post('https://' + addr + '/setMic', data = {
+        'state': "1"
+    }).always(function(d) {
+        console.log(d);
+        $(".rec-btn").addClass("active-btn");
+    });
 };
 
 async function stop() {
@@ -238,11 +253,17 @@ async function stop() {
     }
     if (micsource) {
         try {
-            micsource.disconnect(wssink);
+            micsource.disconnect();
         } catch (DOMException) {
             console.log("Already disconnected MIC?");
         }
     }
+    $.post('https://' + addr + '/setMic', data = {
+        'state': "0"
+    }).always(function(d) {
+        console.log(d);
+        $(".rec-btn,.play-btn").removeClass("active-btn");
+    });
 };
 
 
@@ -250,7 +271,7 @@ async function stop() {
 $(function() {
     /* WEBSOCKET */
 
-    webSocket1 = new WebSocket('wss://' + window.location.hostname + '/ws');
+    webSocket1 = new WebSocket('wss://' + addr + '/ws');
     /*webSocket1 = new WebSocket('wss://10.10.10.15/ws');*/
     webSocket1.addEventListener('open', function(event) {
         console.log("Connected.");
@@ -288,7 +309,7 @@ $(function() {
                 last_chunk_time_avg = (last_chunk_time_avg * last_chunk_time_num + elapsed) / (last_chunk_time_num + 1);
                 if (last_chunk_time_num < 100)
                     last_chunk_time_num++;
-                $("#ic_time").html(elapsed);
+                $("#ic_time").html(elapsed.toFixed(2));
                 $("#ic_time_avg").html(last_chunk_time_avg.toFixed(2));
             }
             last_chunk_time = new_chunk_time;
@@ -318,7 +339,7 @@ $(function() {
         }
     };
     $('#makecall').click(function() {
-        $.post('/makeCall', data = {
+        $.post('https://' + addr + '/makeCall', data = {
             'userid': $('#input_userid').val()
         }).always(function(d) {
             console.log(d);
