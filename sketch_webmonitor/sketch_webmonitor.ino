@@ -131,8 +131,8 @@ void setup(){
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(MIC_ENABLE_PIN, 0);
   pinMode(MIC_ENABLE_PIN, OUTPUT);
-  //logger = new WebsocketLogger();
-  logger = new SerialLogger(115200);
+  logger = new WebsocketLogger();
+  //logger = new SerialLogger(115200);
   
   xTaskCreatePinnedToCore ( ledTask, "ledTask", 512, NULL, 31, &th5, 1 );
   

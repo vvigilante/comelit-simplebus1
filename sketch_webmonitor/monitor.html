@@ -23,9 +23,10 @@
         <div> Data chunk interval: <span id="ic_time">...</span> ms</div>
         <div> Data chunk avg int.: <span id="ic_time_avg">...</span> ms</div>
         <hr/>
-        <button class="play-btn" onClick="play()">PLAY AUDIO</button><br/>
-        <button class="rec-btn" onClick="rec()">OPEN MIC</button><br/>
-        <button class="stop-btn" onClick="stop()">STOP</button><br/>
+        <button class="play-btn" onClick="listen()">LISTEN</button>
+        <button class="stop-btn" onClick="stop_listen()">STOP</button><br/>
+        <button class="rec-btn" onClick="talk()">&nbsp;TALK&nbsp;</button>
+        <button class="stop-btn" onClick="stop_talk()">STOP</button><br/>
     </div>
     <div id="log-box">
         <p class="log-title">Bus messages:</p>

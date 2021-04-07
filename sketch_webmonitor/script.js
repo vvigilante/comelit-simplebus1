@@ -216,7 +216,7 @@ async function initCtx() {
         await audioCtx.audioWorklet.addModule(URL.createObjectURL(blob));
     }
 }
-async function play() {
+async function listen() {
     await initCtx();
     if (wssource == null) {
         wssource = new WSSourceNode(webSocket1);
@@ -224,7 +224,7 @@ async function play() {
     wssource.connect(audioCtx.destination);
     $(".play-btn").addClass("active-btn");
 };
-async function rec() {
+async function talk() {
     await initCtx();
     stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
@@ -243,14 +243,17 @@ async function rec() {
     });
 };
 
-async function stop() {
+async function stop_listen() {
     if (wssource) {
         try {
             wssource.disconnect(audioCtx.destination);
+            $(".play-btn").removeClass("active-btn");
         } catch (DOMException) {
             console.log("Already disconnected SPEAKER?");
         }
     }
+};
+async function stop_talk() {
     if (micsource) {
         try {
             micsource.disconnect();
@@ -262,17 +265,14 @@ async function stop() {
         'state': "0"
     }).always(function(d) {
         console.log(d);
-        $(".rec-btn,.play-btn").removeClass("active-btn");
+        $(".rec-btn").removeClass("active-btn");
     });
 };
 
-
-
-$(function() {
-    /* WEBSOCKET */
-
+function reconnect() {
+    if (webSocket1 != null)
+        return;
     webSocket1 = new WebSocket('wss://' + addr + '/ws');
-    /*webSocket1 = new WebSocket('wss://10.10.10.15/ws');*/
     webSocket1.addEventListener('open', function(event) {
         console.log("Connected.");
         $("#connection-status").html('OK');
@@ -281,9 +281,10 @@ $(function() {
     });
     webSocket1.addEventListener('close', function(event) {
         console.log("Disconnected.");
-        $("#connection-status").html('LOST');
+        $("#connection-status").html('LOST <a href="javascript:reconnect();">reconnect</a>');
         $("#connection-status").removeClass();
         $("#connection-status").addClass('conn-ko');
+        webSocket1 = null;
     });
     var last_chunk_time_avg = 0;
     var last_chunk_time_num = 0;
@@ -338,6 +339,11 @@ $(function() {
             }
         }
     };
+}
+
+$(function() {
+    reconnect();
+
     $('#makecall').click(function() {
         $.post('https://' + addr + '/makeCall', data = {
             'userid': $('#input_userid').val()

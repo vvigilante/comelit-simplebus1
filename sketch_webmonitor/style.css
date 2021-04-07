@@ -105,3 +105,7 @@ hr {
 .active-btn {
     background-color: darkseagreen;
 }
+
+button {
+    font-family: monospace;
+}
