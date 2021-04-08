@@ -56,16 +56,14 @@ const zeroPad = (num, places) => String(num).padStart(places, '0');
 var webSocket1 = null;
 
 class WSSourceNode extends AudioWorkletNode {
-    constructor(ws) {
+    constructor() {
         super(audioCtx, 'ws-receiver');
-        this.socket = ws;
         this.p = this.port;
     }
 }
 class WSSinkNode extends AudioWorkletNode {
-    constructor(ws) {
+    constructor() {
         super(audioCtx, 'ws-sender');
-        this.socket = ws;
         this.port.addEventListener('message', (event) => {
             this.ondata(event);
         });
@@ -73,8 +71,8 @@ class WSSinkNode extends AudioWorkletNode {
     }
     ondata(event) {
         var d = event['data'];
-        this.socket.send(d);
-        //console.log(d);
+        if (webSocket1)
+            webSocket1.send(d);
         drawAudio(d, document.getElementById('micCanvas'));
     }
 }
@@ -217,14 +215,18 @@ async function initCtx() {
     }
 }
 async function listen() {
+    if (webSocket1 == null)
+        return;
     await initCtx();
     if (wssource == null) {
-        wssource = new WSSourceNode(webSocket1);
+        wssource = new WSSourceNode();
     }
     wssource.connect(audioCtx.destination);
     $(".play-btn").addClass("active-btn");
 };
 async function talk() {
+    if (webSocket1 == null)
+        return;
     await initCtx();
     stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
@@ -232,7 +234,7 @@ async function talk() {
     });
     micsource = audioCtx.createMediaStreamSource(stream);
     if (wssink == null) {
-        wssink = new WSSinkNode(webSocket1);
+        wssink = new WSSinkNode();
     }
     micsource.connect(wssink);
     $.post('https://' + addr + '/setMic', data = {
@@ -285,6 +287,8 @@ function reconnect() {
         $("#connection-status").removeClass();
         $("#connection-status").addClass('conn-ko');
         webSocket1 = null;
+        stop_talk();
+        stop_listen();
     });
     var last_chunk_time_avg = 0;
     var last_chunk_time_num = 0;
@@ -310,7 +314,8 @@ function reconnect() {
                 last_chunk_time_avg = (last_chunk_time_avg * last_chunk_time_num + elapsed) / (last_chunk_time_num + 1);
                 if (last_chunk_time_num < 100)
                     last_chunk_time_num++;
-                $("#ic_time").html(elapsed.toFixed(2));
+                if (elapsed > last_chunk_time_avg)
+                    $("#ic_time").html(elapsed.toFixed(2));
                 $("#ic_time_avg").html(last_chunk_time_avg.toFixed(2));
             }
             last_chunk_time = new_chunk_time;
@@ -330,6 +335,7 @@ function reconnect() {
             chk = message[7];
             ack = message[8];
             $("#log").append("<tr>" + "<td>" + d + "</td>" + "<td>" + msg + "</td>" + "<td>" + cmd + "</td>" + "<td>" + id + "</td>" + "<td>" + chk + "</td>" + "<td>" + ack + "</td>" + "</tr>");
+            $("#log-container").animate({ 'scrollTop': $("#log-container > table").innerHeight() - $("#log-container").innerHeight() }, 500);
             $("#userid").html(userid);
             $("#state").removeClass();
             $("#state").addClass('state' + state);

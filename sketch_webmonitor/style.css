@@ -98,7 +98,7 @@ hr {
     }
 }
 
-#log tr {
+#log tr:not(:first-child) {
     animation: colorfade 5s;
 }
 
@@ -108,4 +108,9 @@ hr {
 
 button {
     font-family: monospace;
+}
+
+#log-container {
+    max-height: 500px;
+    overflow-y: auto;
 }

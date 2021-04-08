@@ -134,7 +134,7 @@ void setup(){
   logger = new WebsocketLogger();
   //logger = new SerialLogger(115200);
   
-  xTaskCreatePinnedToCore ( ledTask, "ledTask", 512, NULL, 31, &th5, 1 );
+  xTaskCreatePinnedToCore ( ledTask, "ledTask", 1024, NULL, 31, &th5, 1 );
   
   sb = new Simplebus(BUS_RECEIVE_PIN, BUS_TRANSMIT_PIN);
   sbi = new SimplebusIntercom(sb, 0);
@@ -149,7 +149,7 @@ void setup(){
   server_setup();
   audio_setup();
   xTaskCreatePinnedToCore ( busTask, "busTask", 1024, NULL, 29, &th0, 0 );
-  xTaskCreatePinnedToCore ( callTask, "callTask", 512, NULL, 30, &th1, 0 );
+  xTaskCreatePinnedToCore ( callTask, "callTask", 1024, NULL, 30, &th1, 0 );
   xTaskCreatePinnedToCore ( audioreadTask, "audioreadTask", 2048, NULL, 30, &th2, 0 );
   xTaskCreatePinnedToCore ( audiowriteTask, "audiowriteTask", 2048, NULL, 30, &th3, 0 );
   xTaskCreatePinnedToCore ( serverTask, "serverTask", 4096, NULL, 30, &th4, 1 );

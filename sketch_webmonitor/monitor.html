@@ -30,16 +30,18 @@
     </div>
     <div id="log-box">
         <p class="log-title">Bus messages:</p>
-        <table id="log">
-            <tr>
-                <th>Time</th>
-                <th>Raw message</th>
-                <th>Command</th>
-                <th>User Id</th>
-                <th>chksum</th>
-                <th>ack</th>
-            </tr>
-        </table>
+        <div id="log-container">
+            <table id="log">
+                <tr>
+                    <th>Time</th>
+                    <th>Raw message</th>
+                    <th>Command</th>
+                    <th>User Id</th>
+                    <th>chksum</th>
+                    <th>ack</th>
+                </tr>
+            </table>
+        </div>
         <p class="log-title">Analog reading:</p>
         <canvas id="audioCanvas" width="500" height="200"></canvas><br/>
         <p class="log-title">Mic reading:</p>
