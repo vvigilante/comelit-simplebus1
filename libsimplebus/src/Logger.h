@@ -7,6 +7,13 @@
 #define LOGGER_H_
 
 #define MAX(a,b) ((a)>(b)?(a):(b))
+
+
+/**
+ * A buffered logger abstract class that allows for different implementations.
+ * Initialize the concrete logger and assign it to the global "logger" variable.
+ * The rest of the program just needs to call the "LOG" macro
+ */
 class Logger
 {
 public:

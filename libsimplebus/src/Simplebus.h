@@ -4,6 +4,9 @@
 #ifndef SIMPLEBUS_H_
 #define SIMPLEBUS_H_
 
+/**
+ * Allows to receive and transmit messages on the bus
+ */
 class Simplebus : public SimplebusReceiver, SimplebusTransmitter{
     public:
         Simplebus(int receiver_pin, int transmitter_pin):

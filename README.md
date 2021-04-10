@@ -5,8 +5,8 @@ If you live in an older building with an audio-only door phone based on the Simp
 | Dir | Content 
 ------- | --- 
 | libsimplebus | Arduino library that allows to interface with the digital bus 
-| sketch_webmonitor | Arduino sketch that implements a websocket based https interface that logs the messages on the bus, allows to listen to the audio signal and to transmit audio signals from the computer mic. It also allows to initiate calls on the bus, useful for testing. 
-| other | partial stuff, pending cleanup 
+| web_intercom | Arduino sketch that implements a complete intercom operated by a web interface. 
+| sketch_webmonitor | **(temporarily broken)** Arduino sketch that implements a websocket based https interface that logs the messages on the bus, allows to listen to the audio signal and to transmit audio signals from the computer mic. It also allows to initiate calls on the bus, useful for testing. 
 
 
 ## Wiring
