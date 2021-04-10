@@ -1,6 +1,8 @@
 # Comelit Simplebus 1 compatible smart audio intercom
 If you live in an older building with an audio-only door phone based on the SimpleBus version 1, you may have no choice for upgrading to a smart alternative. This project aims to build an open implementation of a smart doorphone compatible with the comelit simplebus 1 audio protocol, to replace ordinary units such as 2408w/a, 2708W and 2xx8W in general.
 
+![](built.jpg)
+
 ## Content of the repository
 | Dir | Content 
 ------- | --- 
