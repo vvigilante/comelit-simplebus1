@@ -18,6 +18,9 @@ Wire according to the wiring diagram; **mind the polarity of the bus!**
 Tested on Wemos D1 mini32 (esp32 arduino core 1.0.5).
 
 
+### Known issues
+* Feedback from the PC speaker back into the mic.
+
 
 ## Protocol
 
